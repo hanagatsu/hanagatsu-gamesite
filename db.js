@@ -1,14 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
-const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3');
-const path = require('path');
 const bcrypt = require('bcrypt');
 
-const dbFilePath = path.resolve(__dirname, 'prisma', 'database.ds');
-const adapter = new PrismaBetterSqlite3({
-  url: `file:${dbFilePath}`
-});
-
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 // 관리자 계정 초기화
 async function ensureAdminAccount() {
