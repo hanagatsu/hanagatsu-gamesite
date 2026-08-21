@@ -420,6 +420,43 @@ async function adminDeleteUserDb(executorRole, targetUserId) {
   });
 }
 
+async function updateProfileDb(userId, currentPassword, newNickname, newPassword) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new Error('유저를 찾을 수 없습니다.');
+
+  if (user.role === 'ADMIN' || user.role === 'SUBADMIN') {
+    throw new Error('관리자 계정은 이 메뉴에서 수정할 수 없습니다.');
+  }
+
+  // 비밀번호 검증 (프로젝트 해싱 방식에 맞춤: bcrypt 또는 crypto)
+  const isMatch = await bcrypt.compare(currentPassword, user.password);
+  if (!isMatch) throw new Error('현재 비밀번호가 일치하지 않습니다.');
+
+  const updateData = {};
+
+  if (newNickname && newNickname.trim() !== '' && newNickname !== user.nickname) {
+    const exist = await prisma.user.findFirst({
+      where: { nickname: newNickname.trim(), id: { not: userId } }
+    });
+    if (exist) throw new Error('이미 사용 중인 닉네임입니다.');
+    updateData.nickname = newNickname.trim();
+  }
+
+  if (newPassword && newPassword.trim() !== '') {
+    if (newPassword.length < 6) throw new Error('새 비밀번호는 6자리 이상이어야 합니다.');
+    updateData.password = await bcrypt.hash(newPassword, 10);
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    throw new Error('변경할 내용을 입력해 주세요.');
+  }
+
+  return await prisma.user.update({
+    where: { id: userId },
+    data: updateData
+  });
+}
+
 module.exports = {
   prisma,
   ensureAdminAccount,
@@ -435,5 +472,6 @@ module.exports = {
   getUserProfile,
   getAllUsersDb,
   adminUpdateUserDb,
-  adminDeleteUserDb
+  adminDeleteUserDb,
+  updateProfileDb
 };

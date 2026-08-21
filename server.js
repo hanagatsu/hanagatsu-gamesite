@@ -25,7 +25,8 @@ const {
   getUserProfile,
   getAllUsersDb,
   adminUpdateUserDb,
-  adminDeleteUserDb
+  adminDeleteUserDb,
+  updateProfileDb
 } = require('./db');
 
 const app = express();
@@ -551,6 +552,42 @@ function setupSocketIO(ioInstance) {
         broadcastP2PRoomState();
       } catch (err) {
         socket.emit('authError', { message: '로그인 처리 중 오류가 발생했습니다.' });
+      }
+    });
+
+    socket.on('updateProfile', async (data) => {
+      const player = players[socket.id];
+      if (!player || player.isGuest) {
+        return socket.emit('gameError', { message: '로그인이 필요합니다.' });
+      }
+
+      if (player.role === 'ADMIN' || player.role === 'SUBADMIN') {
+        return socket.emit('gameError', { message: '관리자 계정은 수정할 수 없습니다.' });
+      }
+
+      try {
+        // 닉네임만 바꿀 때는 currentPassword가 없을 수 있으므로 체크 로직 분기
+        if (data.newPassword && data.newPassword.trim() !== '') {
+          if (!data.currentPassword) {
+            return socket.emit('gameError', { message: '비밀번호를 변경하려면 현재 비밀번호를 입력해야 합니다.' });
+          }
+        }
+
+        const updated = await updateProfileDb(
+          player.userId,
+          data.currentPassword || '', // 비밀번호 미변경 시 빈 문자열
+          data.newNickname,
+          data.newPassword
+        );
+
+        player.nickname = updated.nickname;
+
+        socket.emit('profileUpdated', {
+          nickname: updated.nickname,
+          message: '회원 정보가 성공적으로 변경되었습니다.'
+        });
+      } catch (err) {
+        socket.emit('gameError', { message: err.message });
       }
     });
 

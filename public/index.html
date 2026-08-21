@@ -50,6 +50,7 @@
       </div>
       <div class="header-right">
         <span class="status-indicator"><span class="dot online"></span> 8080 포트 연동 중</span>
+        <button id="btnUserProfile" class="btn-secondary btn-sm hidden">⚙️ 정보 수정</button>
         <button id="leaveBtn" class="btn-leave">로그아웃 / 퇴장</button>
       </div>
     </header>
@@ -392,6 +393,54 @@
           <button type="button" id="modalDeleteBtn" class="btn-delete-user">🗑️ 계정 영구 삭제</button>
           <div class="footer-right-buttons">
             <button type="button" id="cancelModalBtn" class="btn-secondary">취소</button>
+            <button type="submit" class="btn-primary">저장 및 적용</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 👤 일반 유저 본인 정보 수정 모달 -->
+  <div id="userProfileModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>👤 내 정보 수정</h3>
+        <button id="closeProfileModalBtn" class="modal-close-btn">&times;</button>
+      </div>
+      <form id="userProfileForm" class="modal-body">
+        
+        <!-- 닉네임 변경 영역 -->
+        <div class="form-group">
+          <label>닉네임</label>
+          <input type="text" id="profileNewNickname" placeholder="변경할 닉네임 입력">
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #2d3748; margin: 10px 0;">
+
+        <!-- 비밀번호 변경 토글 버튼 -->
+        <button type="button" id="togglePasswordBtn" class="btn-secondary full-width" style="margin-bottom: 10px;">
+          🔒 비밀번호 변경하기
+        </button>
+
+        <!-- 비밀번호 변경 입력 폼 (hidden 클래스로 제어) -->
+        <div id="passwordSection" class="hidden" style="flex-direction: column; gap: 12px; background: #111827; padding: 12px; border-radius: 6px;">
+          <div class="form-group">
+            <label style="color: #f87171;">현재 비밀번호</label>
+            <input type="password" id="profileCurrentPassword" placeholder="현재 비밀번호 입력">
+          </div>
+          <div class="form-group">
+            <label>새 비밀번호 (6자 이상)</label>
+            <input type="password" id="profileNewPassword" placeholder="새 비밀번호 입력">
+          </div>
+          <div class="form-group">
+            <label>새 비밀번호 재입력</label>
+            <input type="password" id="profileConfirmPassword" placeholder="새 비밀번호 다시 입력">
+          </div>
+        </div>
+
+        <div class="modal-footer" style="margin-top: 15px;">
+          <div class="footer-right-buttons">
+            <button type="button" id="cancelProfileModalBtn" class="btn-secondary">취소</button>
             <button type="submit" class="btn-primary">저장 및 적용</button>
           </div>
         </div>

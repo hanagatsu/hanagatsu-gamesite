@@ -82,6 +82,19 @@ const tabAdminBtn = document.getElementById('tabAdminBtn');
 const adminUsersTableBody = document.getElementById('adminUsersTableBody');
 const adminRefreshUsersBtn = document.getElementById('adminRefreshUsersBtn');
 
+// 내 정보 수정 모달 요소
+const btnUserProfile = document.getElementById('btnUserProfile');
+const userProfileModal = document.getElementById('userProfileModal');
+const userProfileForm = document.getElementById('userProfileForm');
+const closeProfileModalBtn = document.getElementById('closeProfileModalBtn');
+const cancelProfileModalBtn = document.getElementById('cancelProfileModalBtn');
+const profileNewNickname = document.getElementById('profileNewNickname');
+const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+const passwordSection = document.getElementById('passwordSection');
+const profileCurrentPassword = document.getElementById('profileCurrentPassword');
+const profileNewPassword = document.getElementById('profileNewPassword');
+const profileConfirmPassword = document.getElementById('profileConfirmPassword');
+
 // Modal Elements
 const adminUserModal = document.getElementById('adminUserModal');
 const adminUserEditForm = document.getElementById('adminUserEditForm');
@@ -95,6 +108,8 @@ const editBalance = document.getElementById('editBalance');
 const editPassword = document.getElementById('editPassword');
 const editRole = document.getElementById('editRole');
 const editRoleGroup = document.getElementById('editRoleGroup');
+
+let isPasswordEditMode = false;
 
 let currentUser = {
   isGuest: true,
@@ -240,6 +255,7 @@ socket.on('loginSuccess', (data) => {
     userModeTag.textContent = '플레이어';
     userModeTag.className = 'mode-tag member';
     tabAdminBtn.classList.add('hidden');
+    if (btnUserProfile) btnUserProfile.classList.remove('hidden');
   }
 
   aiPlayerNameDisplay.textContent = data.nickname;
@@ -829,4 +845,96 @@ socket.on('diceResult', (data) => {
 
 socket.on('gameError', (data) => {
   showToast(data.message);
+});
+
+// 정보 수정 버튼 클릭 시 모달 열기
+if (btnUserProfile) {
+  btnUserProfile.addEventListener('click', () => {
+    if (currentUser.isGuest) return showToast('게스트는 이용할 수 없습니다.');
+    profileNewNickname.value = currentUser.nickname || '';
+    profileCurrentPassword.value = '';
+    profileNewPassword.value = '';
+    profileConfirmPassword.value = '';
+    
+    // 비밀번호 입력창 초기화 (숨김 상태)
+    isPasswordEditMode = false;
+    if (passwordSection) {
+      passwordSection.style.display = 'none';
+      passwordSection.classList.add('hidden');
+    }
+    if (togglePasswordBtn) {
+      togglePasswordBtn.textContent = '🔒 비밀번호 변경하기';
+    }
+
+    userProfileModal.classList.remove('hidden');
+  });
+}
+
+// 비밀번호 변경 토글 버튼 클릭
+if (togglePasswordBtn) {
+  togglePasswordBtn.onclick = function(e) {
+    e.preventDefault();
+    isPasswordEditMode = !isPasswordEditMode;
+
+    if (isPasswordEditMode) {
+      passwordSection.classList.remove('hidden');
+      passwordSection.style.display = 'flex';
+      togglePasswordBtn.textContent = '🔓 비밀번호 변경 취소';
+    } else {
+      passwordSection.style.display = 'none';
+      passwordSection.classList.add('hidden');
+      togglePasswordBtn.textContent = '🔒 비밀번호 변경하기';
+      profileCurrentPassword.value = '';
+      profileNewPassword.value = '';
+      profileConfirmPassword.value = '';
+    }
+  };
+}
+
+function closeUserProfileModal() {
+  if (userProfileModal) userProfileModal.classList.add('hidden');
+}
+
+if (closeProfileModalBtn) closeProfileModalBtn.addEventListener('click', closeUserProfileModal);
+if (cancelProfileModalBtn) cancelProfileModalBtn.addEventListener('click', closeUserProfileModal);
+
+// 저장 및 적용 제출
+if (userProfileForm) {
+  userProfileForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newNickname = profileNewNickname.value.trim();
+    const currentPassword = profileCurrentPassword.value.trim();
+    const newPassword = profileNewPassword.value.trim();
+    const confirmPassword = profileConfirmPassword.value.trim();
+
+    let requestData = { newNickname };
+
+    // 비밀번호 변경 모드가 켜져 있는 경우에만 검증 수행
+    if (isPasswordEditMode) {
+      if (!currentPassword) {
+        return showToast('현재 비밀번호를 입력해 주세요.');
+      }
+      if (!newPassword) {
+        return showToast('새 비밀번호를 입력해 주세요.');
+      }
+      if (newPassword.length < 6) {
+        return showToast('새 비밀번호는 최소 6자 이상이어야 합니다.');
+      }
+      if (newPassword !== confirmPassword) {
+        return showToast('새 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.');
+      }
+      requestData.currentPassword = currentPassword;
+      requestData.newPassword = newPassword;
+    }
+
+    socket.emit('updateProfile', requestData);
+  });
+}
+
+socket.on('profileUpdated', (data) => {
+  showToast(data.message, true);
+  currentUser.nickname = data.nickname;
+  playerDisplay.textContent = `${data.nickname} 님`;
+  if (aiPlayerNameDisplay) aiPlayerNameDisplay.textContent = data.nickname;
+  closeUserProfileModal();
 });
