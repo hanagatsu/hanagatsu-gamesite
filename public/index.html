@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V-Gamble & Stock Platform</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- [1] 진입 및 로그인/회원가입 화면 -->
+  <div id="loginScreen" class="screen">
+    <div class="intro-card">
+      <div class="logo-badge">V-GAMBLE SIMULATION</div>
+      <h2>가상 배팅 & 거래소</h2>
+      <p class="desc">실제 돈이 아닌 가상 머니로 즐기는 5대 시뮬레이션</p>
+
+      <div class="auth-tabs">
+        <button id="tabLoginBtn" class="auth-tab active">로그인</button>
+        <button id="tabRegisterBtn" class="auth-tab">회원가입</button>
+      </div>
+
+      <form id="loginForm" class="auth-form">
+        <input type="text" id="loginUsername" placeholder="아이디" required>
+        <input type="password" id="loginPassword" placeholder="비밀번호" required>
+        <button type="submit" class="btn-primary full-width">로그인</button>
+      </form>
+
+      <form id="registerForm" class="auth-form hidden">
+        <input type="text" id="regUsername" placeholder="아이디" required>
+        <input type="password" id="regPassword" placeholder="비밀번호" required>
+        <input type="text" id="regNickname" placeholder="닉네임" required>
+        <button type="submit" class="btn-primary full-width">회원가입 (지원금 100만 원)</button>
+      </form>
+
+      <div class="divider"><span>또는</span></div>
+
+      <button id="guestBtn" class="btn-secondary full-width">게스트로 입장 (관전 모드)</button>
+    </div>
+  </div>
+
+  <!-- [2] 메인 대시보드 화면 -->
+  <div id="gameScreen" class="screen hidden">
+    <!-- 헤더 -->
+    <header class="top-nav">
+      <div class="user-info">
+        <span class="user-badge" id="playerDisplay">Guest</span>
+        <span class="mode-tag" id="userModeTag">관전 모드 (Read-Only)</span>
+        <span class="balance-display hidden" id="userBalanceBox">보유 자산: <strong id="playerBalance">0</strong> 원</span>
+      </div>
+      <div class="header-right">
+        <span class="status-indicator"><span class="dot online"></span> 8080 포트 연동 중</span>
+        <button id="leaveBtn" class="btn-leave">로그아웃 / 퇴장</button>
+      </div>
+    </header>
+
+    <!-- 게임 탭 네비게이션 -->
+    <nav class="game-tabs">
+      <button class="tab-btn active" data-tab="tab-rps">가위바위보</button>
+      <button class="tab-btn" data-tab="tab-scratch">즉석복권</button>
+      <button class="tab-btn" data-tab="tab-lotto">주말복권 (동행복권 7/45)</button>
+      <button class="tab-btn" data-tab="tab-dice">확률도박 (1~100%)</button>
+      <button class="tab-btn" data-tab="tab-stocks">주식 거래소 (20종)</button>
+      <button class="tab-btn admin-only-tab hidden" id="tabAdminBtn" data-tab="tab-admin">👑 유저 관리 패널</button>
+    </nav>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <main class="content-container">
+
+      <!-- 1. 가위바위보 (실제 유저 P2P 승자독식 시스템 탑재) -->
+      <section id="tab-rps" class="tab-content active">
+        <div class="panel">
+          <div class="rps-sub-tabs">
+            <button id="btnSubP2P" class="sub-tab-btn active">👥 플레이어 1:1 실시간 대전 (승자 독식)</button>
+            <button id="btnSubAi" class="sub-tab-btn">🤖 AI 상대 1:1 대전</button>
+          </div>
+
+          <!-- [1-A] 실제 유저 1:1 P2P 대전 화면 -->
+          <div id="rpsP2PContainer" class="rps-sub-view active">
+            <div class="panel-header">
+              <h3>플레이어 1vs1 매칭</h3>
+              <span class="badge" id="p2pPotBadge">총 상금: 0원</span>
+            </div>
+            <p class="sub-desc">배팅금을 걸고 참가하면 상대방과 매칭됩니다. 10초 안에 선택하지 않으면 자동 기권패 처리됩니다!</p>
+
+            <div class="rps-arena">
+              <div class="fighter-box">
+                <div class="name" id="p2pPlayer1Name">플레이어 1 (대기 중)</div>
+                <div class="card-display" id="p2pPlayer1Card">?</div>
+                <span class="submit-tag" id="p2pPlayer1Status">미제출</span>
+              </div>
+              <div class="vs-text">VS</div>
+              <div class="fighter-box">
+                <div class="name" id="p2pPlayer2Name">플레이어 2 (대기 중)</div>
+                <div class="card-display" id="p2pPlayer2Card">?</div>
+                <span class="submit-tag" id="p2pPlayer2Status">미제출</span>
+              </div>
+            </div>
+
+            <div class="result-box" id="p2pResultBox">참여자를 기다리고 있습니다.</div>
+            
+            <div class="countdown-bar">
+              <span>남은 선택 시간: <strong id="p2pTimerDisplay" style="color: #ef4444; font-size: 20px;">10</strong>초</span>
+            </div>
+
+            <!-- 매칭 참가 영역 -->
+            <div class="p2p-join-control" id="p2pJoinBox">
+              <div class="bet-input-row">
+                <label>참가 배팅금 (KRW):</label>
+                <input type="number" id="p2pBetAmountInput" value="10000" min="1000" step="1000">
+                <button id="btnJoinP2PMatch" class="btn-primary">⚔️ 매칭 참가 (플레이)</button>
+              </div>
+            </div>
+
+            <!-- 10초 실시간 선택 패널 (매칭 시 활성화) -->
+            <div class="action-grid p2p-choice-grid hidden" id="p2pChoiceBox">
+              <button class="btn-p2p-choice btn-primary" data-choice="가위">✌️ 가위</button>
+              <button class="btn-p2p-choice btn-primary" data-choice="바위">✊ 바위</button>
+              <button class="btn-p2p-choice btn-primary" data-choice="보">🖐️ 보</button>
+            </div>
+          </div>
+
+          <!-- [1-B] AI 대전 화면 -->
+          <div id="rpsAiContainer" class="rps-sub-view">
+            <div class="panel-header">
+              <h3>인공지능(AI) 1:1 맞대결</h3>
+              <span class="badge">승리 시 배팅금 2배</span>
+            </div>
+            <p class="sub-desc">원하는 배팅금을 걸고 [가위 / 바위 / 보]를 선택해 AI를 이겨보세요! (무승부 시 배팅금 환급)</p>
+
+            <div class="rps-arena">
+              <div class="fighter-box">
+                <div class="name" id="aiPlayerNameDisplay">나 (Player)</div>
+                <div class="card-display" id="aiMyChoice">?</div>
+              </div>
+              <div class="vs-text">VS</div>
+              <div class="fighter-box">
+                <div class="name">AI 봇</div>
+                <div class="card-display" id="aiBotChoice">?</div>
+              </div>
+            </div>
+
+            <div class="result-box" id="aiRpsResult">선택지를 클릭해 대결을 시작하세요!</div>
+
+            <div class="bet-section">
+              <input type="number" id="aiRpsBetAmount" placeholder="배팅 금액 (KRW)" value="10000" disabled>
+              <div class="action-grid">
+                <button class="btn-ai-choice btn-primary disabled-btn" data-choice="가위" data-action="rps">✌️ 가위</button>
+                <button class="btn-ai-choice btn-primary disabled-btn" data-choice="바위" data-action="rps">✊ 바위</button>
+                <button class="btn-ai-choice btn-primary disabled-btn" data-choice="보" data-action="rps">🖐️ 보</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 즉석복권 -->
+      <section id="tab-scratch" class="tab-content">
+        <div class="panel">
+          <h3>즉석 긁는 복권 (Instant Scratch)</h3>
+          <p class="sub-desc">서버 확률 알고리즘에 따라 구매 즉시 당첨금 정산 (최대 10배)</p>
+          <div class="scratch-grid">
+            <div class="scratch-card" data-price="5000">
+              <h4>5,000원권</h4>
+              <div class="scratch-slot">? ? ?</div>
+              <button class="btn-buy btn-scratch-buy disabled-btn" data-price="5000" data-action="scratch">복권 긁기 (5,000원)</button>
+            </div>
+            <div class="scratch-card featured" data-price="10000">
+              <h4>10,000원권</h4>
+              <div class="scratch-slot">? ? ?</div>
+              <button class="btn-buy btn-scratch-buy disabled-btn" data-price="10000" data-action="scratch">복권 긁기 (10,000원)</button>
+            </div>
+            <div class="scratch-card" data-price="50000">
+              <h4>50,000원권</h4>
+              <div class="scratch-slot">? ? ?</div>
+              <button class="btn-buy btn-scratch-buy disabled-btn" data-price="50000" data-action="scratch">복권 긁기 (50,000원)</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 주말복권 (동행복권) -->
+      <section id="tab-lotto" class="tab-content">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>동행복권 공식 연동 주말 로또 (7 / 45)</h3>
+            <span class="badge" id="lottoRoundBadge">1회 1,000원</span>
+          </div>
+
+          <div class="lotto-winning-display">
+            <h4 id="lottoDrawTitle">동행복권 최신 공식 당첨 번호</h4>
+            <div class="ball-group" id="lottoWinningBalls">
+              <span class="ball">?</span><span class="ball">?</span><span class="ball">?</span>
+              <span class="ball">?</span><span class="ball">?</span><span class="ball">?</span>
+              <span class="ball bonus-ball">?</span>
+            </div>
+            <p class="sub-desc" id="lottoDrawDateText" style="margin-top: 10px; margin-bottom: 0;">추첨일시: 불러오는 중...</p>
+          </div>
+
+          <div class="lotto-mode-tabs">
+            <button id="btnLottoAutoTab" class="sub-tab-btn active">⚡ 자동 응모</button>
+            <button id="btnLottoManualTab" class="sub-tab-btn">✍️ 수동 7개 번호 직접 선택</button>
+          </div>
+
+          <div id="lottoAutoView" class="lotto-sub-view active">
+            <p class="sub-desc">서버 난수 시스템을 통해 1~45 중 7개의 중복되지 않는 번호를 자동으로 발급받습니다.</p>
+            <button id="lottoAutoBuyBtn" class="btn-primary full-width disabled-btn" data-action="lotto">7개 번호 자동 응모하기 (1,000원)</button>
+          </div>
+
+          <div id="lottoManualView" class="lotto-sub-view">
+            <div class="manual-lotto-header">
+              <p class="sub-desc">원하는 번호 7개를 클릭하여 선택하세요. (현재 선택: <strong id="selectedCountDisplay" style="color: #60a5fa;">0</strong> / 7)</p>
+              <button id="resetSelectedBallsBtn" class="btn-secondary btn-sm">선택 초기화</button>
+            </div>
+            <div class="lotto-number-grid" id="lottoNumberGrid"></div>
+            <button id="lottoManualBuyBtn" class="btn-primary full-width disabled-btn" data-action="lotto">선택한 7개 번호로 수동 응모하기 (1,000원)</button>
+          </div>
+
+          <div class="my-lotto-box">
+            <h4>내 구매 로또 티켓</h4>
+            <div id="myLottoList" class="ticket-list">
+              <div class="empty-msg">응모한 로또 복권이 없습니다.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 확률도박 -->
+      <section id="tab-dice" class="tab-content">
+        <div class="panel">
+          <h3>확률도박 (High-Risk Multiplier)</h3>
+          <p class="sub-desc">1% ~ 100% 난수 판정 | 승리 시 배당률에 맞춰 당첨금 지급</p>
+          <div class="dice-sim-box">
+            <div class="dice-meter">
+              <div class="meter-text" id="diceRollValue">?</div>
+            </div>
+            <div id="diceWinRateDisplay" class="dice-info">당첨 확률: 50% (배당률 2.00배)</div>
+
+            <div class="slider-box">
+              <label>승리 확률 설정: <span id="dicePercentLabel">50%</span></label>
+              <input type="range" id="dicePercentSlider" min="1" max="95" value="50" disabled>
+            </div>
+
+            <div class="bet-controls">
+              <input type="number" id="diceBetInput" placeholder="배팅 금액 (KRW)" value="10000" disabled>
+              <button id="diceRollBtn" class="btn-primary disabled-btn" data-action="dice">주사위 굴리기</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. 주식 거래소 -->
+      <section id="tab-stocks" class="tab-content">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>국내/해외 주요 20개 종목 증권 거래소</h3>
+            <span class="sub-badge">* 매도시 매도 대금의 99.95%만 지급 (0.05% 수수료)</span>
+          </div>
+
+          <div class="market-status-banner">
+            <div class="market-badge" id="krMarketBadge">국내장: 확인 중...</div>
+            <div class="market-badge" id="usMarketBadge">미국장: 확인 중...</div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="styled-table" id="stocksTable">
+              <thead>
+                <tr>
+                  <th>종목코드</th>
+                  <th>종목명</th>
+                  <th>현재가 (KRW)</th>
+                  <th>등락률</th>
+                  <th>시장 상태</th>
+                  <th>주문</th>
+                </tr>
+              </thead>
+              <tbody id="stocksTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="my-orders-container">
+            <h4>📋 내 대기 중인 예약 주문 목록 (장 시작 시 자동 체결)</h4>
+            <table class="styled-table">
+              <thead>
+                <tr>
+                  <th>주문 번호</th>
+                  <th>종목명</th>
+                  <th>구분</th>
+                  <th>예약 수량</th>
+                  <th>상태</th>
+                  <th>조작</th>
+                </tr>
+              </thead>
+              <tbody id="myOrdersTableBody">
+                <tr><td colspan="6" class="empty-msg">대기 중인 예약 주문이 없습니다.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="my-stocks-container">
+            <h4>📈 내 보유 주식 포트폴리오</h4>
+            <table class="styled-table">
+              <thead>
+                <tr>
+                  <th>종목명</th>
+                  <th>보유 수량</th>
+                  <th>평균 매수가</th>
+                  <th>주문</th>
+                </tr>
+              </thead>
+              <tbody id="myStocksTableBody">
+                <tr><td colspan="4" class="empty-msg">보유 중인 주식이 없습니다.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. 관리자 패널 -->
+      <section id="tab-admin" class="tab-content">
+        <div class="panel admin-panel">
+          <div class="panel-header">
+            <h3>👑 관리자 전용 전체 유저 데이터 관리</h3>
+            <button id="adminRefreshUsersBtn" class="btn-secondary">🔄 목록 새로고침</button>
+          </div>
+          <p class="sub-desc">전체 등록된 회원의 정보를 조회하고 닉네임, 보유 잔액, 권한, 비밀번호를 실시간으로 변경할 수 있습니다.</p>
+
+          <div class="table-wrapper">
+            <table class="styled-table admin-users-table">
+              <thead>
+                <tr>
+                  <th>UID</th>
+                  <th>아이디</th>
+                  <th>닉네임</th>
+                  <th>보유 잔액 (원)</th>
+                  <th>권한 (ROLE)</th>
+                  <th>가입일시</th>
+                  <th>관리 조작</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTableBody">
+                <tr><td colspan="7" class="empty-msg">유저 데이터를 불러오는 중...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- 관리자 수정 모달 -->
+  <div id="adminUserModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>👤 회원 상세 정보 수정</h3>
+        <button id="closeModalBtn" class="modal-close-btn">&times;</button>
+      </div>
+      <form id="adminUserEditForm" class="modal-body">
+        <input type="hidden" id="editUserId">
+
+        <div class="form-group">
+          <label>회원 아이디 (수정 불가)</label>
+          <input type="text" id="editUsername" disabled class="input-disabled">
+        </div>
+
+        <div class="form-group">
+          <label>닉네임</label>
+          <input type="text" id="editNickname" required placeholder="변경할 닉네임">
+        </div>
+
+        <div class="form-group">
+          <label>보유 잔액 (KRW)</label>
+          <input type="number" id="editBalance" required min="0" step="1" placeholder="설정할 잔액">
+        </div>
+
+        <div class="form-group">
+          <label>새 비밀번호 (미변경 시 공란 유지)</label>
+          <input type="password" id="editPassword" placeholder="변경할 비밀번호 입력">
+        </div>
+
+        <div class="form-group" id="editRoleGroup">
+          <label>권한 등급 (Role)</label>
+          <select id="editRole" class="modal-select">
+            <option value="USER">USER (일반 유저)</option>
+            <option value="SUBADMIN">SUBADMIN (부관리자)</option>
+            <option value="ADMIN">ADMIN (최고 관리자)</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="modalDeleteBtn" class="btn-delete-user">🗑️ 계정 영구 삭제</button>
+          <div class="footer-right-buttons">
+            <button type="button" id="cancelModalBtn" class="btn-secondary">취소</button>
+            <button type="submit" class="btn-primary">저장 및 적용</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

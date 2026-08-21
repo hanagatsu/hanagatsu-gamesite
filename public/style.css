@@ -1,0 +1,889 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #0f1117;
+  color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+}
+
+.screen {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* 진입 카드 */
+#loginScreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.intro-card {
+  background-color: #1a1e29;
+  border: 1px solid #2d3748;
+  border-radius: 12px;
+  padding: 36px 28px;
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+
+.logo-badge {
+  display: inline-block;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.intro-card h2 {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.intro-card .desc {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 20px;
+}
+
+.auth-tabs {
+  display: flex;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #2d3748;
+}
+
+.auth-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.auth-tab.active {
+  color: #60a5fa;
+  border-bottom-color: #60a5fa;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.auth-form input, .bet-controls input, .bet-section input {
+  width: 100%;
+  background-color: #111827;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  padding: 12px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.auth-form input:focus, input:focus, select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 18px 0;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #2d3748;
+}
+
+.divider span {
+  padding: 0 10px;
+}
+
+/* 네비게이션 & 헤더 */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #161b26;
+  padding: 16px 24px;
+  border-bottom: 1px solid #283143;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-badge {
+  font-weight: 700;
+  font-size: 16px;
+  color: #60a5fa;
+}
+
+.mode-tag {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.mode-tag.guest-tag {
+  background: #374151;
+  color: #fbbf24;
+  border: 1px solid #d97706;
+}
+
+.mode-tag.member {
+  background: #064e3b;
+  color: #34d399;
+  border: 1px solid #059669;
+}
+
+.mode-tag.subadmin-tag {
+  background: #1e3a8a;
+  color: #93c5fd;
+  border: 1px solid #3b82f6;
+  font-weight: bold;
+}
+
+.mode-tag.admin-tag {
+  background: #7c2d12;
+  color: #fca5a5;
+  border: 1px solid #ef4444;
+  font-weight: bold;
+}
+
+.balance-display {
+  font-size: 14px;
+  color: #e5e7eb;
+}
+
+.balance-display strong {
+  color: #fbbf24;
+  font-size: 16px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.status-indicator {
+  font-size: 13px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+}
+
+.dot.online {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #10b981;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.btn-leave {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 메인 탭 바 */
+.game-tabs {
+  display: flex;
+  background-color: #111827;
+  border-bottom: 1px solid #1f2937;
+  padding: 0 16px;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-btn.active {
+  color: #60a5fa;
+  border-bottom-color: #60a5fa;
+}
+
+.tab-btn.admin-only-tab {
+  color: #f87171;
+}
+
+.tab-btn.admin-only-tab.active {
+  color: #ef4444;
+  border-bottom-color: #ef4444;
+}
+
+/* 가위바위보 & 로또 서브 탭 */
+.rps-sub-tabs, .lotto-mode-tabs {
+  display: flex;
+  gap: 8px;
+  background-color: #111827;
+  padding: 6px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.sub-tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.sub-tab-btn.active {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.rps-sub-view, .lotto-sub-view {
+  display: none;
+}
+
+.rps-sub-view.active, .lotto-sub-view.active {
+  display: block;
+}
+
+/* 메인 컨테이너 */
+.content-container {
+  max-width: 1000px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.panel {
+  background-color: #1a1e29;
+  border: 1px solid #2d3748;
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.panel.admin-panel {
+  border-color: #7f1d1d;
+  background-color: #18141c;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.sub-desc {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 20px;
+}
+
+.badge {
+  background-color: #2563eb;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.sub-badge {
+  font-size: 12px;
+  color: #f59e0b;
+}
+
+/* 시장 상태 배너 */
+.market-status-banner {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.market-badge {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.market-badge.open {
+  background-color: #064e3b;
+  color: #34d399;
+  border: 1px solid #059669;
+}
+
+.market-badge.closed {
+  background-color: #450a0a;
+  color: #fca5a5;
+  border: 1px solid #dc2626;
+}
+
+.status-tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.status-tag.open { background: #064e3b; color: #34d399; }
+.status-tag.closed { background: #7c2d12; color: #fca5a5; }
+.status-tag.pending { background: #1e3a8a; color: #93c5fd; }
+
+/* 가위바위보 아레나 */
+.rps-arena {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 30px 0;
+}
+
+.fighter-box {
+  text-align: center;
+}
+
+.fighter-box .name {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-bottom: 8px;
+}
+
+.card-display {
+  width: 90px;
+  height: 90px;
+  background-color: #262e3d;
+  border: 2px solid #3b82f6;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.vs-text {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ef4444;
+}
+
+.result-box {
+  text-align: center;
+  padding: 14px;
+  background-color: #222938;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #38bdf8;
+  margin-bottom: 16px;
+}
+
+.countdown-bar {
+  text-align: center;
+  background: #111827;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.countdown-bar strong {
+  color: #f87171;
+  font-size: 16px;
+}
+
+.bet-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-grid {
+  display: flex;
+  gap: 12px;
+}
+
+/* 복권 */
+.scratch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.scratch-card {
+  background-color: #222938;
+  border: 1px solid #374151;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.scratch-card.featured {
+  border-color: #f59e0b;
+}
+
+.scratch-slot {
+  background: #111827;
+  padding: 20px 0;
+  border-radius: 6px;
+  margin: 16px 0;
+  font-size: 24px;
+  letter-spacing: 4px;
+}
+
+/* 로또 */
+.lotto-winning-display {
+  text-align: center;
+  background-color: #222938;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.ball-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.ball {
+  width: 42px;
+  height: 42px;
+  background-color: #f59e0b;
+  color: #111;
+  font-weight: 800;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.ball.bonus-ball {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+/* 수동 번호 선택 그리드 (1~45) */
+.manual-lotto-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.btn-sm {
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+}
+
+.lotto-number-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 8px;
+  background-color: #111827;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.grid-number-btn {
+  width: 100%;
+  aspect-ratio: 1;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  color: #d1d5db;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.grid-number-btn:hover {
+  background-color: #374151;
+  color: #fff;
+}
+
+.grid-number-btn.selected {
+  background-color: #3b82f6 !important;
+  border-color: #60a5fa !important;
+  color: #ffffff !important;
+  transform: scale(1.08);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+}
+
+.my-lotto-box, .my-stocks-container, .my-orders-container {
+  margin-top: 24px;
+  background: #111827;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.my-lotto-box h4, .my-stocks-container h4, .my-orders-container h4 {
+  margin-bottom: 12px;
+  color: #60a5fa;
+}
+
+.ticket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ticket-item {
+  background: #1f2937;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.empty-msg {
+  color: #6b7280;
+  text-align: center;
+  padding: 12px 0;
+}
+
+/* 확률도박 */
+.dice-sim-box {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.dice-meter {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 120px;
+  height: 120px;
+  background-color: #222938;
+  border: 3px solid #3b82f6;
+  border-radius: 50%;
+  margin-bottom: 16px;
+}
+
+.meter-text {
+  font-size: 32px;
+  font-weight: 800;
+  color: #60a5fa;
+}
+
+.dice-info {
+  font-size: 14px;
+  color: #34d399;
+  margin-bottom: 16px;
+}
+
+.slider-box {
+  max-width: 400px;
+  margin: 0 auto 20px;
+}
+
+.slider-box input[type="range"] {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.bet-controls {
+  display: flex;
+  max-width: 400px;
+  margin: 0 auto;
+  gap: 10px;
+}
+
+/* 테이블 */
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+.styled-table th, .styled-table td {
+  padding: 12px 14px;
+  border: 1px solid #2d3748;
+  text-align: center;
+}
+
+.styled-table th {
+  background-color: #222938;
+  color: #9ca3af;
+}
+
+.admin-users-table th {
+  background-color: #2a1b24;
+  color: #fca5a5;
+}
+
+.price-up { color: #ef4444; font-weight: 600; }
+.price-down { color: #3b82f6; font-weight: 600; }
+
+/* 버튼 공통 */
+button {
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.btn-secondary {
+  background-color: #374151;
+  color: #e5e7eb;
+  border: 1px solid #4b5563;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.btn-buy {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  width: 100%;
+  font-weight: 600;
+}
+
+.btn-trade-buy {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.btn-trade-sell {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.btn-cancel-order {
+  background-color: #4b5563;
+  color: #fca5a5;
+  border: 1px solid #ef4444;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.btn-cancel-order:hover {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-edit-user {
+  background-color: #9333ea;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.btn-edit-user:hover {
+  background-color: #a855f7;
+}
+
+.btn-delete-user {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.btn-delete-user:hover {
+  background-color: #b91c1c;
+}
+
+.disabled-btn {
+  opacity: 0.45;
+  cursor: not-allowed !important;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* 관리자 모달 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-card {
+  background-color: #1a1e29;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: #111827;
+  border-bottom: 1px solid #2d3748;
+}
+
+.modal-header h3 {
+  font-size: 16px;
+  color: #60a5fa;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-close-btn:hover {
+  color: #fff;
+}
+
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.form-group input, .modal-select {
+  width: 100%;
+  background-color: #111827;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.input-disabled {
+  background-color: #1f2937 !important;
+  color: #6b7280 !important;
+  cursor: not-allowed;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 16px;
+  border-top: 1px solid #2d3748;
+}
+
+.footer-right-buttons {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ef4444;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  z-index: 1001;
+}
