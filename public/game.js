@@ -244,18 +244,23 @@ socket.on('loginSuccess', (data) => {
     userModeTag.className = 'mode-tag admin-tag';
     tabAdminBtn.textContent = '👑 유저 관리 패널';
     tabAdminBtn.classList.remove('hidden');
+    if (btnUserProfile) btnUserProfile.classList.add('hidden'); // 관리자는 숨김
   } else if (data.role === 'SUBADMIN') {
     playerDisplay.textContent = `🛡️ ${data.nickname}`;
     userModeTag.textContent = '부관리자';
     userModeTag.className = 'mode-tag subadmin-tag';
     tabAdminBtn.textContent = '🛡️ 유저 관리 패널';
     tabAdminBtn.classList.remove('hidden');
+    if (btnUserProfile) btnUserProfile.classList.add('hidden'); // 부관리자는 숨김
   } else {
+    // ⬇️ 일반 USER 등급일 때 버튼 노출
     playerDisplay.textContent = `${data.nickname} 님`;
     userModeTag.textContent = '플레이어';
     userModeTag.className = 'mode-tag member';
     tabAdminBtn.classList.add('hidden');
-    if (btnUserProfile) btnUserProfile.classList.remove('hidden');
+    if (btnUserProfile) {
+      btnUserProfile.classList.remove('hidden'); // 👈 hidden 클래스 확실히 제거
+    }
   }
 
   aiPlayerNameDisplay.textContent = data.nickname;
