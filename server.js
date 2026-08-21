@@ -520,9 +520,6 @@ function setupSocketIO(ioInstance) {
         }
 
         const user = await authenticateUser(data.username, data.password);
-        if (!user) {
-          return socket.emit('authError', { message: '아이디 또는 비밀번호가 일치하지 않습니다.' });
-        }
 
         releaseGuestCode(socket.id);
 
@@ -551,7 +548,8 @@ function setupSocketIO(ioInstance) {
 
         broadcastP2PRoomState();
       } catch (err) {
-        socket.emit('authError', { message: '로그인 처리 중 오류가 발생했습니다.' });
+        // "존재하지 않는 계정입니다." 또는 "비밀번호가 일치하지 않습니다." 출력
+        socket.emit('authError', { message: err.message || '로그인 처리 중 오류가 발생했습니다.' });
       }
     });
 

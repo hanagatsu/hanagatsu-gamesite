@@ -67,7 +67,9 @@ async function registerUser(username, plainPassword, nickname) {
 
 // 로그인 검증
 async function authenticateUser(username, plainPassword) {
-  if (!username || !plainPassword) return null;
+  if (!username || !plainPassword) {
+    throw new Error('아이디와 비밀번호를 입력해 주세요.');
+  }
 
   const cleanUsername = String(username).trim();
   const user = await prisma.user.findUnique({
@@ -79,11 +81,17 @@ async function authenticateUser(username, plainPassword) {
     }
   });
 
-  if (!user) return null;
+  // 유저가 없는 경우
+  if (!user) {
+    throw new Error('존재하지 않는 계정입니다.');
+  }
 
+  // 비밀번호 검증
   const passwordStr = String(plainPassword);
   const isMatch = await bcrypt.compare(passwordStr, user.password);
-  if (!isMatch) return null;
+  if (!isMatch) {
+    throw new Error('비밀번호가 일치하지 않습니다.');
+  }
 
   return user;
 }

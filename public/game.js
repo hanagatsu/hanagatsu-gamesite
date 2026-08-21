@@ -259,7 +259,7 @@ socket.on('loginSuccess', (data) => {
     userModeTag.className = 'mode-tag member';
     tabAdminBtn.classList.add('hidden');
     if (btnUserProfile) {
-      btnUserProfile.classList.remove('hidden'); // 👈 hidden 클래스 확실히 제거
+      btnUserProfile.classList.remove('hidden');
     }
   }
 

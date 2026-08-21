@@ -887,3 +887,34 @@ button {
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   z-index: 1001;
 }
+
+/* 하단 배너 고정 */
+.beta-notice-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(17, 24, 39, 0.95);
+  border-top: 1px solid #374151;
+  padding: 8px 16px;
+  text-align: center;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+  pointer-events: none; /* 클릭 방해 금지 */
+}
+
+.beta-main-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f59e0b;
+  margin-bottom: 2px;
+}
+
+.beta-sub-text {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.content-container, #loginScreen {
+  padding-bottom: 60px !important;
+}
